@@ -1,0 +1,23 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>FeedBack - Home</title> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
+</head> 
+<body> 
+    <header> 
+        <h1>Welcome to FeedBack</h1> 
+        <nav> 
+            <ul> 
+                <li><a href="{{ url_for('feedback_form') }}">Submit Feedback</a></li> 
+                <li><a href="{{ url_for('feedback_list') }}">View Feedback</a></li> 
+            </ul> 
+        </nav> 
+    </header> 
+    <main> 
+        <p>Use the navigation links above to submit feedback or view all submitted feedback.</p> 
+    </main> 
+</body> 
+</html> 
