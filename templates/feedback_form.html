@@ -1,39 +1,72 @@
-{% extends 'base.html' %} 
- 
-{% block content %} 
-<h1>Feedback Form</h1> 
-<form method="POST" action="{{ url_for('feedback_form') }}"> 
-    <label for="username">Username:</label> 
-    <input type="text" id="username" name="username" required> 
-    <br> 
-    <label for="email">Email:</label> 
-    <input type="email" id="email" name="email" required> 
-    <br> 
-    <label for="phone_number">Phone Number:</label> 
-    <input type="text" id="phone_number" name="phone_number" required> 
-    <br> 
-    <label for="comments">Comments:</label> 
-    <textarea id="comments" name="comments" required></textarea> 
-    <br> 
-    <label for="star_rating">Star Rating:</label> 
-    <select id="star_rating" name="star_rating" required> 
-        <option value="">Select a rating</option> 
-        <option value="1">1</option> 
-        <option value="2">2</option> 
-        <option value="3">3</option> 
-        <option value="4">4</option> 
-        <option value="5">5</option> 
-    </select> 
-    <br> 
-    <button type="submit">Submit Feedback</button> 
-</form> 
-{% with messages = get_flashed_messages(with_categories=true) %} 
-    {% if messages %} 
-        <ul class=flashes> 
-        {% for category, message in messages %} 
-            <li class="{{ category }}">{{ message }}</li> 
-        {% endfor %} 
-        </ul> 
-    {% endif %} 
-{% endwith %} 
-{% endblock %}
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Submit Feedback</title> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
+</head> 
+<body> 
+    <header> 
+        <h1>Submit Feedback</h1> 
+        <nav> 
+            <ul> 
+                <li><a href="{{ url_for('home') }}">Home</a></li> 
+                <li><a href="{{ url_for('feedback_list') }}">View Feedback</a></li> 
+            </ul> 
+        </nav> 
+    </header> 
+    <main> 
+        {% with messages = get_flashed_messages(with_categories=true) %} 
+          {% if messages %} 
+            <ul class="flashes"> 
+              {% for category, message in messages %} 
+                <li class="{{ category }}">{{ message }}</li> 
+              {% endfor %} 
+            </ul> 
+          {% endif %} 
+        {% endwith %} 
+        <form method="POST"> 
+            {{ form.hidden_tag() }} 
+            <div> 
+                {{ form.username.label }}<br> 
+                {{ form.username(size=32) }}<br> 
+                {% for error in form.username.errors %} 
+                    <span style="color: red;">[{{ error }}]</span> 
+                {% endfor %} 
+            </div> 
+            <div> 
+                {{ form.email.label }}<br> 
+                {{ form.email(size=32) }}<br> 
+                {% for error in form.email.errors %} 
+                    <span style="color: red;">[{{ error }}]</span> 
+                {% endfor %} 
+            </div> 
+            <div> 
+                {{ form.phone.label }}<br> 
+                {{ form.phone(size=32) }}<br> 
+                {% for error in form.phone.errors %} 
+                    <span style="color: red;">[{{ error }}]</span> 
+                {% endfor %} 
+            </div> 
+            <div> 
+                {{ form.comments.label }}<br> 
+                {{ form.comments(rows=4, cols=32) }}<br> 
+                {% for error in form.comments.errors %} 
+                    <span style="color: red;">[{{ error }}]</span> 
+                {% endfor %} 
+            </div> 
+            <div> 
+                {{ form.rating.label }}<br> 
+                {{ form.rating() }}<br> 
+                {% for error in form.rating.errors %} 
+                    <span style="color: red;">[{{ error }}]</span> 
+                {% endfor %} 
+            </div> 
+            <div> 
+                {{ form.submit() }} 
+            </div> 
+        </form> 
+    </main> 
+</body> 
+</html>
