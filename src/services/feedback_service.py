@@ -3,6 +3,7 @@ import logging
 import traceback
 from forms import FeedbackForm
 from db import get_db_connection
+from services.feedback_service import submit_feedback, get_feedback_entries
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -38,21 +39,7 @@ def feedback_form():
             rating = form.rating.data
 
             # Save feedback to the database
-            connection = get_db_connection()
-            if connection:
-                try:
-                    with connection.cursor() as cursor:
-                        sql = """
-                        INSERT INTO feedback (username, email, phone, comments, rating)
-                        VALUES (%s, %s, %s, %s, %s)
-                        """
-                        cursor.execute(sql, (username, email, phone, comments, rating))
-                    connection.commit()
-                    logging.info("Feedback data saved to the database successfully.")
-                except Exception as e:
-                    logging.error("Error saving feedback to the database: %s", traceback.format_exc())
-                finally:
-                    connection.close()
+            submit_feedback(username, email, phone, comments, rating)
 
             flash('Feedback submitted successfully!', 'success')
             return redirect(url_for('feedback_list'))
@@ -66,20 +53,7 @@ def feedback_form():
 def feedback_list():
     try:
         logging.info("Accessing feedback list page.")
-        connection = get_db_connection()
-        feedback_entries = []
-        if connection:
-            try:
-                with connection.cursor() as cursor:
-                    sql = "SELECT username, email, comments, rating FROM feedback"
-                    cursor.execute(sql)
-                    feedback_entries = cursor.fetchall()
-                logging.info("Feedback data retrieved successfully.")
-            except Exception as e:
-                logging.error("Error retrieving feedback from the database: %s", traceback.format_exc())
-            finally:
-                connection.close()
-
+        feedback_entries = get_feedback_entries()
         return render_template('feedback_list.html', feedback_entries=feedback_entries)
     except Exception as e:
         logging.error("Error accessing feedback list page: %s", traceback.format_exc())
@@ -91,3 +65,48 @@ if __name__ == '__main__':
         app.run(port=5001, debug=True)
     except Exception as e:
         logging.error("Error starting Flask application: %s", traceback.format_exc())
+
+# services/feedback_service.py
+
+from db import get_db_connection
+import logging
+import traceback
+
+def submit_feedback(username, email, phone, comments, rating):
+    try:
+        connection = get_db_connection()
+        if connection:
+            try:
+                with connection.cursor() as cursor:
+                    sql = """
+                    INSERT INTO feedback (username, email, phone, comments, rating)
+                    VALUES (%s, %s, %s, %s, %s)
+                    """
+                    cursor.execute(sql, (username, email, phone, comments, rating))
+                connection.commit()
+                logging.info("Feedback data saved to the database successfully.")
+            except Exception as e:
+                logging.error("Error saving feedback to the database: %s", traceback.format_exc())
+            finally:
+                connection.close()
+    except Exception as e:
+        logging.error("Error in submit_feedback: %s", traceback.format_exc())
+
+def get_feedback_entries():
+    feedback_entries = []
+    try:
+        connection = get_db_connection()
+        if connection:
+            try:
+                with connection.cursor() as cursor:
+                    sql = "SELECT username, email, comments, rating FROM feedback"
+                    cursor.execute(sql)
+                    feedback_entries = cursor.fetchall()
+                logging.info("Feedback data retrieved successfully.")
+            except Exception as e:
+                logging.error("Error retrieving feedback from the database: %s", traceback.format_exc())
+            finally:
+                connection.close()
+    except Exception as e:
+        logging.error("Error in get_feedback_entries: %s", traceback.format_exc())
+    return feedback_entries
