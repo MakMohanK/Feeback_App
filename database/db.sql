@@ -15,4 +15,3 @@ CREATE TABLE IF NOT EXISTS `feedback` (
 );
 
 -- You can add more tables or modify this structure based on requirements.
-
