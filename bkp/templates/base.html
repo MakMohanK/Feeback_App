@@ -4,6 +4,7 @@
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/' + g.current_theme + '-theme.css') }}"> 
     <title>FeedBack App</title> 
 </head> 
 <body> 
@@ -11,11 +12,12 @@
         <ul> 
             <li><a href="{{ url_for('home') }}">Home</a></li> 
             <li><a href="{{ url_for('feedback_form') }}">Feedback Form</a></li> 
-            <li><a href="{{ url_for('feedback_listing') }}">Feedback Listing</a></li> 
+            <li><a href="{{ url_for('feedback_list') }}">Feedback Listing</a></li> 
+            <li><a href="{{ url_for('theme_settings') }}">Theme Settings</a></li> 
         </ul> 
     </nav> 
     <div class="content"> 
         {% block content %}{% endblock %} 
     </div> 
 </body> 
-</html> 
+</html>

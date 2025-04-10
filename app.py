@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash 
+from flask import Flask, render_template, request, redirect, url_for, flash, session, g 
 import logging 
 import traceback 
 from forms import FeedbackForm 
-from db import get_db_connection 
+from db import get_db_connection, save_user_theme, get_user_theme 
  
 # Initialize the Flask application 
 app = Flask(__name__) 
@@ -12,6 +12,16 @@ logging.basicConfig(level=logging.INFO)
  
 # Add a secret key for CSRF protection 
 app.config['SECRET_KEY'] = 'your_secret_key_here'  # INPUT_REQUIRED {Set a secure secret key for CSRF protection} 
+ 
+@app.before_request 
+def before_request(): 
+    try: 
+        user_id = session.get('user_id', 1)  # Assuming a logged-in user with ID 1 for simplicity 
+        g.current_theme = get_user_theme(user_id) 
+        logging.info(f"Current theme set to: {g.current_theme}") 
+    except Exception as e: 
+        logging.error("Error setting theme in before_request: %s", traceback.format_exc()) 
+        g.current_theme = 'default'  # Fallback to default theme 
  
 @app.route('/') 
 def home(): 
@@ -84,6 +94,25 @@ def feedback_list():
     except Exception as e: 
         logging.error("Error accessing feedback list page: %s", traceback.format_exc()) 
         return "An error occurred while loading the feedback list page.", 500 
+ 
+@app.route('/theme-settings', methods=['GET', 'POST']) 
+def theme_settings(): 
+    try: 
+        logging.info("Accessing theme settings page.") 
+        user_id = session.get('user_id', 1)  # Assuming a logged-in user with ID 1 for simplicity 
+ 
+        if request.method == 'POST': 
+            selected_theme = request.form.get('theme') 
+            save_user_theme(user_id, selected_theme) 
+            flash(f'Theme "{selected_theme}" selected!', 'success') 
+            logging.info(f'Theme "{selected_theme}" has been selected.') 
+ 
+        # Retrieve the user's current theme preference 
+        current_theme = get_user_theme(user_id) 
+        return render_template('theme_settings.html', current_theme=current_theme) 
+    except Exception as e: 
+        logging.error("Error in theme settings: %s", traceback.format_exc()) 
+        return "An error occurred while loading the theme settings page.", 500 
  
 if __name__ == '__main__': 
     try: 
