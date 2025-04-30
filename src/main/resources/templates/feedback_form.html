@@ -1,0 +1,52 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <title>Submit Feedback</title> 
+    <link rel="stylesheet" href="/css/styles.css"> 
+</head> 
+<body> 
+    <header> 
+        <h1>Submit Feedback</h1> 
+        <nav> 
+            <ul> 
+                <li><a href="/">Home</a></li> 
+                <li><a href="/feedback-list">View Feedback</a></li> 
+            </ul> 
+        </nav> 
+    </header> 
+    <main> 
+        <form method="POST" action="/feedback-form"> 
+            <div> 
+                <label for="username">Username</label><br> 
+                <input type="text" id="username" name="username" value="${feedback.username}"><br> 
+                <span style="color: red;">${#fields.hasErrors('username')} ? *{username} : ''</span> 
+            </div> 
+            <div> 
+                <label for="email">Email</label><br> 
+                <input type="email" id="email" name="email" value="${feedback.email}"><br> 
+                <span style="color: red;">${#fields.hasErrors('email')} ? *{email} : ''</span> 
+            </div> 
+            <div> 
+                <label for="phone">Phone Number</label><br> 
+                <input type="text" id="phone" name="phone" value="${feedback.phone}"><br> 
+                <span style="color: red;">${#fields.hasErrors('phone')} ? *{phone} : ''</span> 
+            </div> 
+            <div> 
+                <label for="comments">Comments</label><br> 
+                <textarea id="comments" name="comments" rows="4">${feedback.comments}</textarea><br> 
+                <span style="color: red;">${#fields.hasErrors('comments')} ? *{comments} : ''</span> 
+            </div> 
+            <div> 
+                <label for="rating">Star Rating</label><br> 
+                <input type="number" id="rating" name="rating" min="1" max="5" value="${feedback.rating}"><br> 
+                <span style="color: red;">${#fields.hasErrors('rating')} ? *{rating} : ''</span> 
+            </div> 
+            <div> 
+                <input type="submit" value="Submit Feedback"> 
+            </div> 
+        </form> 
+    </main> 
+</body> 
+</html> 
